@@ -9,16 +9,15 @@
 class CueListInterface
 {
   private:
-	CueList *cue_list;
+	  CueList *cue_list;
 
   public:
-	CueListInterface(int number_of_cues);
-	void play(int num);
+	  CueListInterface(int number_of_cues);
 
-    void BuildCueList();
-    void UpdateCueOnly(Cue cue_to_update, std::vector<MoveInstructions>)
-    void UpdateTrack(Cue cue_to_update, std::vector<MoveInstructions>)
-    void UpdateTrace(Cue cue_to_update, std::vector<MoveInstructions>)
-    void UpdateTraceTrace(Cue cue_to_update, std::vector<MoveInstructions>)
+    void ProcessCueList();
+    void UpdateCueOnly(Cue cue_to_update, std::vector<MoveInstruction>);
+    void UpdateTrack(Cue cue_to_update, std::vector<MoveInstruction>);
+    void UpdateTrace(Cue cue_to_update, std::vector<MoveInstruction>);
+    void UpdateTraceTrace(Cue cue_to_update, std::vector<MoveInstruction>);
 
 };
