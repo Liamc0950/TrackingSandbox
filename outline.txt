@@ -1,0 +1,19 @@
+
+CueListInterface
+    BuildCueList
+    UpdateCueOnly(Cue, List<MoveInstructions>)
+    UpdateTrack(Cue, List<MoveInstructions>)
+    UpdateTrace(Cue, List<MoveInstructions>)
+    UpdateTraceTrace(Cue, List<MoveInstructions>)
+
+Channel
+    Number
+    Value
+    Color
+Cue
+    List<MoveInstruction>
+    Number
+CueList
+MoveInstruction
+    Channel
+    Value
