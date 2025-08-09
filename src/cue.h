@@ -13,42 +13,43 @@ class Channel;
 class MoveInstruction;
 class CueList;
 
-class Cue
-{
+class Cue {
+public:
+    explicit Cue(int number, float fade_time=3.0f);
 
-  public:
-    explicit Cue(int number);
-    
-    void process_channel_values(const std::map<int, Channel>& channels);
+    int get_cue_number() const;
 
-    Channel get_channel_in_cue(Channel channel, Cue cue);
+    // Move instruction management
+    MoveInstruction* add_move_instruction(int channel_number, int value);
+    void remove_move_instruction(int channel_number);
+    MoveInstruction* get_move_for_channel(int channel_number) const;
+    bool has_move_for_channel(int channel_id) const;
 
-    void UpdateCueOnly(std::vector<MoveInstruction*>);
-    void UpdateTrack(CueList* cue_list, unsigned short channel_number, signed char new_value);
-    void UpdateTrace(std::vector<MoveInstruction*>);
-    void UpdateTraceTrace(std::vector<MoveInstruction*>);
+    // Properties
+    int get_number() const { return m_number; }
+    float get_fade_time() const { return m_fade_time; }
+    void set_fade_time(float time) { m_fade_time = time; }
 
-    unsigned short get_number();
+    // Navigation
+    Cue* get_next_cue() const { return m_next_cue; }
+    Cue* get_previous_cue() const { return m_previous_cue; }
+    void set_next_cue(Cue* next) { m_next_cue = next; }
+    void set_previous_cue(Cue* prev) { m_previous_cue = prev; }
 
-    Cue* get_next_cue() const;
-    Cue* get_previous_cue() const;
+    // Access moves
+    const std::vector<std::unique_ptr<MoveInstruction>>& get_moves() const;
 
-    bool is_blocked() const;
+private:
+    int m_number;
 
-    void set_next_cue(Cue* cue);
-    void set_previous_cue(Cue* cue);
+    std::vector<std::unique_ptr<MoveInstruction> > m_move_instructions;
 
+    Cue *m_previous_cue;
+    Cue *m_next_cue;
 
-    std::list<MoveInstruction*> get_move_instructions();
+    float m_fade_time;
 
-    private:
-        unsigned short m_number;
-        std::list<MoveInstruction*> m_move_instructions;
-
-        Cue *m_previous_cue;
-        Cue *m_next_cue;
-
-        bool m_is_block;
+    bool m_is_block;
 };
 
 #endif

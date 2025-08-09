@@ -10,49 +10,77 @@
 class Cue;
 class Channel;
 
-class CueList
-{
-    public:
-        explicit CueList(unsigned short number_of_cues);
+class CueList {
+public:
+    explicit CueList(unsigned short number_of_cues);
 
-        [[nodiscard]] int get_cue_count() const;
-
-        [[nodiscard]] std::map<int, Channel> get_channels();
-
-        void insert_cue(Cue cue, Cue *previous_cue);
-
-        void append_cue(const Cue &cue);
-
-        Cue get_cue_by_number(int cue_number) const;
-
-        void process_cues();
-
-        void draw_cue_list();
+    enum class UpdateMode {
+        UPDATE_TRACE,      // Update original cue where channel was last set
+        UPDATE_TRACK,      // Update in current cue (override)
+        UPDATE_CUE_ONLY,   // Update cue only
+    };
 
 
-        std::map<int, Cue*> get_cue_lookup_map();
 
-        std::list<Cue>& get_cues();
+    // Cue management
+    void append_cue(int cue_number, float fade_time = 3.0f);
 
-    private:
+    void insert_cue(int after_cue_number, int new_cue_number, float fade_time = 3.0f);
 
-        std::list<Cue> m_cue_storage;
-        std::map<int, Cue*> m_cue_lookup_map;
+    void delete_cue(int cue_number);
 
-        Cue* m_first_cue;
-        Cue* m_current_cue;
-        Cue* m_last_cue;
+    Cue *find_cue(int cue_number);
 
-        //Channels stored in vector where index is channel number
-        std::map<int, Channel> m_channel_map;
+    // ATOMIC move instruction operations
+    void set_move_instruction(int cue_number, int channel_id, int value);
 
-        [[nodiscard]] int count_cues() const;
+    void remove_move_instruction(int cue_number, int channel_id);
 
-        void print_header();
+    void update_channel(int channel_number, int new_value, UpdateMode mode, int target_cue_number);
 
-        void print_cue(Cue &cue);
+    // Playback control
+    void go_to_cue(int cue_number);
 
+    void go_to_next_cue();
 
+    void go_to_previous_cue();
+
+    int get_current_cue_number() const;
+
+    // Channel queries (uses timeline traversal)
+    int get_channel_value_at_cue(int channel_id, int cue_number) const;
+
+    std::vector<int> get_active_channels_at_cue(int cue_number);
+
+    Cue *find_last_cue_with_channel(int channel_number) const;
+
+    // Channel access
+    Channel &get_channel(int channel_id);
+
+    const std::map<int, Channel> &get_all_channels() const;
+
+    // Display
+    void draw_cue_list();
+
+    void print_channel_timeline(int channel_id);
+
+    // System integrity
+    bool verify_consistency();
+
+    int count_cues() const;
+private:
+    std::list<Cue> m_cue_storage;
+    std::map<int, Cue *> m_cue_lookup_map;
+    std::map<int, Channel> m_channel_map;
+
+    //Navigation
+    Cue *m_first_cue;
+    Cue *m_current_cue;
+    Cue *m_last_cue;
+
+    static void print_header();
+
+    void print_cue(Cue &cue);
 };
 
 #endif

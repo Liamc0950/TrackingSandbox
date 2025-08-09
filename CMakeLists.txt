@@ -14,4 +14,6 @@ add_executable(TrackingSandbox src/main.cpp
         src/cue.cpp
         src/cue_list.cpp
         src/move_instruction.cpp
-        src/move_instruction.h)
+        src/move_instruction.h
+        src/console_interface.h
+        src/console_interface.cpp)
