@@ -270,9 +270,6 @@ void CueList::update_channel(const int channel_number, const int new_value, cons
             if (next_target_cue) {
                 set_move_instruction(next_target_cue->get_cue_number(), channel_number, old_channel_value);
             }
-
-            // Print debug info and return early
-            m_channel_map.at(channel_number).print_move_instructions();
             return;
         }
     }
@@ -280,7 +277,6 @@ void CueList::update_channel(const int channel_number, const int new_value, cons
     //Perform update
     if (target_cue) {
         set_move_instruction(target_cue->get_cue_number(), channel_number, new_value);
-        m_channel_map.at(channel_number).print_move_instructions();
     }
     else {
         throw std::out_of_range("No cue found");
@@ -301,7 +297,15 @@ std::string CueList::get_channel_color_at_cue(const int channel_id, const int cu
     const Channel channel = m_channel_map.at(channel_id);
     const Cue* last_cue = m_cue_lookup_map.at(cue_number)->get_previous_cue();
 
-    const int last_cue_value = channel.get_value_at_cue(last_cue->get_cue_number());
+    int last_cue_value = -1;
+
+    if (last_cue) {
+        last_cue_value = channel.get_value_at_cue(last_cue->get_cue_number());
+    }
+    else {
+        last_cue_value = -1;
+    }
+
     const int new_cue_value = channel.get_value_at_cue(cue_number);
 
     if (last_cue_value < new_cue_value) {
@@ -389,10 +393,37 @@ void CueList::print_header() {
 void CueList::print_cue(const Cue& cue) const {
     const int cue_num = cue.get_cue_number();
 
-    std::cout << "|" << std::setw(8) << std::left << cue_num << "|"
-              << std::setw(8) << std::left << get_channel_value_at_cue(1, cue_num) << "|"
-              << std::setw(8) << std::left << get_channel_value_at_cue(2, cue_num) << "|"
-              << std::setw(8) << std::left << get_channel_value_at_cue(3, cue_num) << "|"
-              << std::setw(8) << std::left << get_channel_value_at_cue(4, cue_num) << "|"
-              << std::setw(8) << std::left << get_channel_value_at_cue(5, cue_num) << "|" << std::endl;
+    std::cout << "|" << std::setw(8) << std::left << cue_num << "|";
+    print_channel_value(cue_num, 1);
+    print_channel_value(cue_num, 2);
+    print_channel_value(cue_num, 3);
+    print_channel_value(cue_num, 4);
+    print_channel_value(cue_num, 5);
+    std::cout << std::endl;
+
+}
+
+void CueList::print_channel_value(const int cue_number, const int channel_number) const {
+    const int channel_value = get_channel_value_at_cue(channel_number, cue_number);
+    const std::string channel_color_name = get_channel_color_at_cue(channel_number, cue_number);
+
+    std::string color_ansi_value;
+
+    if (channel_color_name.empty()) {
+        color_ansi_value = "\033[0m";
+    }
+    else if (channel_color_name == "green") {
+        color_ansi_value = "\033[32m";
+    }
+    else if (channel_color_name == "blue") {
+        color_ansi_value = "\033[34m";
+    }
+    else if (channel_color_name == "magenta") {
+        color_ansi_value = "\033[35m";
+    }
+    else if (channel_color_name == "white") {
+        color_ansi_value = "\033[0m";
+    }
+
+    std::cout << std::setw(8) << std::left << color_ansi_value << channel_value << "\033[0m" << "|";
 }

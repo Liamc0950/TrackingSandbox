@@ -95,6 +95,7 @@ int Channel::get_value_at_cue(const int cue_number) const {
         current = current->get_next_move();
     }
 
+
     // Return last move value, or home if no moves
     return last_valid ? last_valid->get_target_value() : m_home_value;
 }

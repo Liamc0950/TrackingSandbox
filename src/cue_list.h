@@ -63,6 +63,9 @@ private:
     static void print_header();
 
     void print_cue(const Cue &cue) const;
+
+    void print_channel_value(int cue_number, int channel_number) const;
+
 };
 
 #endif

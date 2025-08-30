@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcue_list_lib.a CMakeFiles/cue_list_lib.dir/src/cue_list.cpp.o CMakeFiles/cue_list_lib.dir/src/cue.cpp.o CMakeFiles/cue_list_lib.dir/src/channel.cpp.o CMakeFiles/cue_list_lib.dir/src/move_instruction.cpp.o CMakeFiles/cue_list_lib.dir/src/cue_list_wrapper.cpp.o CMakeFiles/cue_list_lib.dir/tests/test_cue_list.cpp.o
+/usr/bin/ranlib libcue_list_lib.a
