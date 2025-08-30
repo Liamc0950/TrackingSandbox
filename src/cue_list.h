@@ -18,6 +18,7 @@ public:
         UPDATE_TRACE,      // Update original cue where channel was last set
         UPDATE_TRACK,      // Update in current cue (override)
         UPDATE_CUE_ONLY,   // Update cue only
+        UPDATE_TRACE_TRACE,// Update as far back as possible
     };
 
 
@@ -49,6 +50,7 @@ public:
 
     // Channel queries (uses timeline traversal)
     int get_channel_value_at_cue(int channel_id, int cue_number) const;
+    [[nodiscard]] std::string get_channel_color_at_cue(int channel_id, int cue_number) const;
 
     std::vector<int> get_active_channels_at_cue(int cue_number);
 

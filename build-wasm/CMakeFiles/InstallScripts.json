@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/liamcorley/CLionProjects/TrackingSandbox/build-wasm/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

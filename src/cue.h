@@ -33,7 +33,7 @@ public:
     // Navigation
     Cue* get_next_cue() const { return m_next_cue; }
     Cue* get_previous_cue() const { return m_previous_cue; }
-    void set_next_cue(Cue* next) { m_next_cue = next; }
+    void set_next_cue(Cue* next) { m_next_cue = next;}
     void set_previous_cue(Cue* prev) { m_previous_cue = prev; }
 
     // Access moves

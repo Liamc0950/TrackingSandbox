@@ -1,0 +1,1 @@
+/Users/liamcorley/emsdk/upstream/emscripten/em++ -O3 -DNDEBUG -s WASM=1 -s MODULARIZE=1 -s EXPORT_NAME=CueListModule -s ALLOW_MEMORY_GROWTH=1 --bind @CMakeFiles/cue_list_wasm.dir/objects1.rsp -o cue_list_wasm.js

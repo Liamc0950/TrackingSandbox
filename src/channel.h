@@ -12,6 +12,9 @@ public:
 
     int get_number() const;
 
+    // Debug
+    void print_move_instructions();
+
     // Move management
     void insert_move_in_timeline(MoveInstruction *new_move);
 

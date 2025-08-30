@@ -1,5 +1,8 @@
 #include "channel.h"
 
+#include <iostream>
+#include <ostream>
+
 
 Channel::Channel(const int number, const int value) : m_number(number),
                                                       m_value(value),
@@ -7,6 +10,15 @@ Channel::Channel(const int number, const int value) : m_number(number),
                                                       m_first_move(nullptr),
                                                       m_last_move(nullptr),
                                                       m_current_position(nullptr) {
+}
+
+void Channel::print_move_instructions() {
+    MoveInstruction* current_move = m_first_move;
+    while (current_move != nullptr) {
+        std::cout << "Move at Cue: " << current_move->get_cue_number() << " to Value: " << current_move->get_target_value() << std::endl;
+        current_move = current_move->get_next_move();
+    }
+
 }
 
 void Channel::insert_move_in_timeline(MoveInstruction *new_move) {

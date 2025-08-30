@@ -71,6 +71,7 @@ void ConsoleInterface::show_help() {
     std::cout << "  goto <cue>                              - Go to cue number" << std::endl;
     std::cout << "  set <cue> <channel> <value>             - Set channel value in specific cue" << std::endl;
     std::cout << "  update trace <channel> <value> <cue>    - Update channel at source cue" << std::endl;
+    std::cout << "  update trace_trace <channel> <value> <cue>    - Update channel at source cue" << std::endl;
     std::cout << "  update track <channel> <value> <cue>    - Update channel in cue to track" << std::endl;
     std::cout << "  update cue_only <channel> <value> <cue> - Update channel in cue only" << std::endl;
     std::cout << "  add cue <number>                        - Add new cue" << std::endl;
@@ -145,6 +146,8 @@ void ConsoleInterface::handle_update_command(std::istringstream& iss) const {
             m_cue_list.update_channel(channel_number, value, CueList::UpdateMode::UPDATE_TRACK, cue_num);
         } else if (mode_str == "trace") {
             m_cue_list.update_channel(channel_number, value, CueList::UpdateMode::UPDATE_TRACE, cue_num);
+        } else if (mode_str == "trace_trace") {
+            m_cue_list.update_channel(channel_number, value, CueList::UpdateMode::UPDATE_TRACE_TRACE, cue_num);
         } else if (mode_str == "cue_only") {
             m_cue_list.update_channel(channel_number, value, CueList::UpdateMode::UPDATE_CUE_ONLY, cue_num);
         }

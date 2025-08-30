@@ -138,17 +138,24 @@ void CueList::set_move_instruction(int cue_number, int channel_number, int value
 
     // Check if move already exists
     if (cue->has_move_for_channel(channel_number)) {
-        // Update
+        // Update existing move
         MoveInstruction* move = cue->get_move_for_channel(channel_number);
+
+        // Remove from timeline first
+        m_channel_map.at(channel_number).remove_move_from_timeline(move);
+
+        // Update the value
         move->set_target_value(value);
+
+        // Re-insert into timeline with new value
+        m_channel_map.at(channel_number).insert_move_in_timeline(move);
+
     } else {
-        // Add
+        // Add new move
         MoveInstruction* move = cue->add_move_instruction(channel_number, value);
         m_channel_map.at(channel_number).insert_move_in_timeline(move);
     }
 }
-
-
 void CueList::remove_move_instruction(int cue_number, int channel_number) {
     // Validation
     Cue* cue = find_cue(cue_number);
@@ -186,8 +193,60 @@ void CueList::update_channel(const int channel_number, const int new_value, cons
             }
             break;
         }
+        case UpdateMode::UPDATE_TRACE_TRACE: {
+
+            //Get last move
+            //If value in cue before is 0 or null:
+                //get move where it moves to 0 or null
+                //If we are going back to a previous move, we need to delete the first move we found
+            //update
+            // Find where this channel was last modified
+
+
+            MoveInstruction* last_move = m_channel_map.at(channel_number).get_last_change_before_cue(target_cue_number);
+            std::cout << "TRACE_TRACE: Found last move: " << (last_move ? "YES" : "NO") << std::endl;
+
+            //If last move exists, target cue is that move's cue, otherwise it's the first cue in the list
+            if (last_move) {
+                std::cout << "Last move at cue " << last_move->get_cue_number() << " with value " << last_move->get_target_value() << std::endl;
+
+                target_cue = last_move->get_cue();
+                Cue* previous_cue = target_cue->get_previous_cue();
+                if (previous_cue) {
+                    int value_previous_cue = get_channel_value_at_cue(channel_number, previous_cue->get_number());
+
+                    std::cout << "Previous cue value: " << value_previous_cue << std::endl;
+                    //If the value of the channel in the previous cue is 0 or null
+                    if (value_previous_cue == 0 || value_previous_cue == -1) {
+
+                        MoveInstruction* previous_move = last_move->get_previous_move();
+
+                        std::cout << "Removing last move from timeline" << std::endl;
+
+                        //As we are "moving" this move back to earlier in the cue list, we want to remove the existing move
+                        last_move->get_cue()->remove_move_instruction(channel_number);
+                        m_channel_map.at(channel_number).remove_move_from_timeline(last_move);
+
+                        if (previous_move) {
+                            target_cue = previous_move->get_cue();
+                        }
+                        else {
+                            target_cue = m_first_cue;
+                        }
+                    }
+
+                }
+            }
+            else {
+                target_cue = m_first_cue;
+            }
+
+            break;
+        }
 
         case UpdateMode::UPDATE_TRACK: {
+            std::cout << "Updating to track channel " << channel_number << " to value " << new_value << "in cue " << target_cue_number << std::endl;
+
             if (target_cue_number == -1) {
                 throw std::invalid_argument("Must specify target cue number");
             }
@@ -199,6 +258,9 @@ void CueList::update_channel(const int channel_number, const int new_value, cons
             break;
         }
         case UpdateMode::UPDATE_CUE_ONLY: {
+            std::cout << "=== BEFORE UPDATE_CUE_ONLY ===" << std::endl;
+            std::cout << "Channel timeline before operation:" << std::endl;
+
             if (target_cue_number == -1) {
                 throw std::invalid_argument("Must specify target cue number");
             }
@@ -207,15 +269,38 @@ void CueList::update_channel(const int channel_number, const int new_value, cons
                 throw std::invalid_argument("Target cue " + std::to_string(target_cue_number) +
                                           " not found");
             }
-            break;
-        }
 
+            // Get the old value before any changes
+            int old_channel_value = get_channel_value_at_cue(channel_number, target_cue_number);
+            std::cout << "OLD VALUE: " << old_channel_value << " NEW VALUE: " << new_value << std::endl;
+
+            // Set the new value in the target cue
+            std::cout << "Setting cue " << target_cue_number << " to value " << new_value << std::endl;
+            set_move_instruction(target_cue->get_cue_number(), channel_number, new_value);
+
+            // If there's a next cue, directly set the old value there
+            Cue* next_target_cue = target_cue->get_next_cue();
+            if (next_target_cue) {
+                std::cout << "Setting next cue " << next_target_cue->get_cue_number() << " to old value " << old_channel_value << std::endl;
+                set_move_instruction(next_target_cue->get_cue_number(), channel_number, old_channel_value);
+            }
+
+            // Print debug info and return early
+            std::cout << "Channel timeline after UPDATE_CUE_ONLY:" << std::endl;
+            m_channel_map.at(channel_number).print_move_instructions();
+            return;
+        }
     }
 
-    // Use your existing set_move_instruction
+    //Perform update
     if (target_cue) {
         set_move_instruction(target_cue->get_cue_number(), channel_number, new_value);
+        m_channel_map.at(channel_number).print_move_instructions();
     }
+    else {
+        throw std::out_of_range("No cue found");
+    }
+
 }
 
 // Playback control
@@ -245,6 +330,16 @@ int CueList::get_current_cue_number() const {
 // Channel queries (uses timeline traversal)
 int CueList::get_channel_value_at_cue(int channel_id, int cue_number) const {
     const Channel channel = m_channel_map.at(channel_id);
+
+    return channel.get_value_at_cue(cue_number);
+
+}
+
+std::string CueList::get_channel_color_at_cue(int cue_number) const {
+    const Channel channel = m_channel_map.at(channel_id);
+    const Cue* last_cue = m_cue_lookup_map.at(cue_number)->get_previous_cue();
+
+    const int last_cue_value = last_cue->get_cue_number();
 
     return channel.get_value_at_cue(cue_number);
 
