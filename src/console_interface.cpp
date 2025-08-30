@@ -48,14 +48,8 @@ void ConsoleInterface::process_command(const std::string& input) {
         stop();
     } else if (command == "show") {
         handle_show_command(iss);
-    } else if (command == "goto") {
-        handle_goto_command(iss);
     } else if (command == "update") {
         handle_update_command(iss);
-    // } else if (command == "add") {
-    //     handle_add_command(iss);
-    // } else if (command == "delete") {
-    //     handle_delete_command(iss);
     } else if (command == "status") {
         show_status();
     } else {
@@ -68,14 +62,11 @@ void ConsoleInterface::show_help() {
     std::cout << "  help                                    - Show this help" << std::endl;
     std::cout << "  status                                  - Show system status" << std::endl;
     std::cout << "  show                                    - Display cue list" << std::endl;
-    std::cout << "  goto <cue>                              - Go to cue number" << std::endl;
     std::cout << "  set <cue> <channel> <value>             - Set channel value in specific cue" << std::endl;
     std::cout << "  update trace <channel> <value> <cue>    - Update channel at source cue" << std::endl;
     std::cout << "  update trace_trace <channel> <value> <cue>    - Update channel at source cue" << std::endl;
     std::cout << "  update track <channel> <value> <cue>    - Update channel in cue to track" << std::endl;
     std::cout << "  update cue_only <channel> <value> <cue> - Update channel in cue only" << std::endl;
-    std::cout << "  add cue <number>                        - Add new cue" << std::endl;
-    std::cout << "  delete cue <number>                     - Delete cue" << std::endl;
     std::cout << "  quit                                    - Exit console" << std::endl;
     std::cout << "========================\n" << std::endl;
 }
@@ -83,12 +74,6 @@ void ConsoleInterface::show_help() {
 void ConsoleInterface::show_status() {
     std::cout << "\n=== System Status ===" << std::endl;
     std::cout << "Total cues: " << m_cue_list.count_cues() << std::endl;
-
-    try {
-        std::cout << "Current cue: " << m_cue_list.get_current_cue_number() << std::endl;
-    } catch (const std::exception&) {
-        std::cout << "Current cue: None set" << std::endl;
-    }
 
     std::cout << "Active channels: " << m_cue_list.get_all_channels().size() << std::endl;
     std::cout << "Command history: " << m_command_history.size() << " commands" << std::endl;
@@ -116,26 +101,15 @@ bool ConsoleInterface::confirm_action(const std::string& message) {
     return (response == "y" || response == "yes" || response == "Y" || response == "YES");
 }
 
-// Command handlers would go here...
 void ConsoleInterface::handle_show_command(std::istringstream& iss) const {
     m_cue_list.draw_cue_list();
 }
 
-void ConsoleInterface::handle_goto_command(std::istringstream& iss) const {
-    int cue_num;
-    if (!(iss >> cue_num)) {
-        std::cout << "Usage: goto <cue>" << std::endl;
-        return;
-    }
-
-    m_cue_list.go_to_cue(cue_num);
-    std::cout << "Current cue: " << cue_num << std::endl;
-}
 void ConsoleInterface::handle_update_command(std::istringstream& iss) const {
     std::string mode_str;
     int channel_number, value, cue_num;
 
-    // Parse basic parameters
+    // if user input does not match command structure
     if (!(iss >> mode_str >> channel_number >> value >> cue_num)) {
         std::cout << "Usage: update <source|here|at> <channel> <value> <cue>" << std::endl;
         return;

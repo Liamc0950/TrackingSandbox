@@ -13,36 +13,28 @@ public:
     int get_number() const;
 
     // Debug
-    void print_move_instructions();
+    void print_move_instructions() const;
 
-    // Move management
     void insert_move_in_timeline(MoveInstruction *new_move);
 
-    void remove_move_from_timeline(MoveInstruction *move);
+    void remove_move_from_timeline(const MoveInstruction *move);
 
-    // Value calculation
     int get_value_at_cue(int cue_number) const;
 
     int get_current_value() const;
 
-    // Playback state
     void set_current_position_to_cue(int cue_number);
 
     void advance_to_next_move();
 
     void retreat_to_previous_move();
 
-    // Timeline analysis
-    MoveInstruction *get_next_change_after_cue(int cue_number) const;
+    [[nodiscard]] MoveInstruction *get_next_change_after_cue(int cue_number) const;
 
-    MoveInstruction *get_last_change_before_cue(int cue_number) const;
+    [[nodiscard]] MoveInstruction *get_last_change_before_cue(int cue_number) const;
 
-    bool has_move_at_cue(int cue_number) const;
+    [[nodiscard]] bool has_move_at_cue(int cue_number) const;
 
-    // Debug/info
-    // void print_timeline() const;
-    //
-    // int get_move_count() const;
 
 private:
     int m_number;

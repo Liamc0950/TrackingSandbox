@@ -18,7 +18,7 @@ Cue* MoveInstruction::get_cue() const {
         return m_cue;
 }
 
-void MoveInstruction::set_target_value(int value) {
+void MoveInstruction::set_target_value(const int value) {
         if (value < -1 || value > 100) {
                 throw std::invalid_argument("Value must be between 0 and 100, or -1 to represent a null move.");
         }

@@ -27,10 +27,7 @@ public:
 private:
     void handle_update_command(std::istringstream& iss) const;
 
-    void handle_goto_command(std::istringstream& iss) const;
     void handle_show_command(std::istringstream& iss) const;
-    // void handle_add_command(std::istringstream& iss);
-    // void handle_delete_command(std::istringstream& iss);
 
     static bool confirm_action(const std::string& message);
 

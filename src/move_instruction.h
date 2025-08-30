@@ -9,23 +9,23 @@ class Cue; //Forward Declaration
 class MoveInstruction {
 public:
 
-    MoveInstruction(const int channel_number, const int target_value, Cue* cue);
+    MoveInstruction(int channel_number, int target_value, Cue* cue);
 
     // Core data access
-    int get_target_value() const;
+    [[nodiscard]] int get_target_value() const;
 
-    int get_channel_number() const;
+    [[nodiscard]] int get_channel_number() const;
 
-    Cue *get_cue() const;
+    [[nodiscard]] Cue *get_cue() const;
 
     void set_target_value(int value);
 
-    int get_cue_number() const; // Helper: parent_cue->get_number()
+    [[nodiscard]] int get_cue_number() const; // Helper: parent_cue->get_number()
 
     // Timeline navigation
-    MoveInstruction *get_next_move() const;
+    [[nodiscard]] MoveInstruction *get_next_move() const;
 
-    MoveInstruction *get_previous_move() const;
+    [[nodiscard]] MoveInstruction *get_previous_move() const;
 
     void set_next_move(MoveInstruction *next);
 

@@ -4,11 +4,11 @@
 #include "cue_list.h"
 #include <algorithm>
 
-Cue::Cue(int number, float fade_time)
+Cue::Cue(const int number, const float fade_time)
     : m_number(number)
-    , m_fade_time(fade_time)
     , m_previous_cue(nullptr)
     , m_next_cue(nullptr)
+    , m_fade_time(fade_time)
     , m_is_block(false) {
 }
 
@@ -38,13 +38,10 @@ MoveInstruction* Cue::add_move_instruction(int channel_number, int value) {
 
 }
 void Cue::remove_move_instruction(int channel_number) {
-    m_move_instructions.erase(
-        std::remove_if(m_move_instructions.begin(), m_move_instructions.end(),
-            [channel_number](const std::unique_ptr<MoveInstruction>& move) {
-                return move->get_channel_number() == channel_number;
-            }),
-        m_move_instructions.end()
-    );
+    std::erase_if(m_move_instructions,
+                  [channel_number](const std::unique_ptr<MoveInstruction>& move) {
+                      return move->get_channel_number() == channel_number;
+                  });
 }
 MoveInstruction* Cue::get_move_for_channel(int channel_number) const {
     for (const auto& move : m_move_instructions) {

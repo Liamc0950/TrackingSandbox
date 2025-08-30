@@ -16,13 +16,6 @@ EMSCRIPTEN_BINDINGS(cue_list_module) {
     class_<CueList>("CueList")
         .constructor<unsigned short>()
         .function("updateChannel", &CueList::update_channel)
-        .function("goToCue", &CueList::go_to_cue)
-        .function("goToNextCue", &CueList::go_to_next_cue)
-        .function("goToPreviousCue", &CueList::go_to_previous_cue)
-        .function("getCurrentCueNumber", &CueList::get_current_cue_number)
         .function("getChannelValueAtCue", &CueList::get_channel_value_at_cue)
-        .function("getChannelColorAtCue", &CueList::get_channel_color_at_cue)
-        .function("countCues", &CueList::count_cues)
-        .function("setMoveInstruction", &CueList::set_move_instruction)
-        .function("removeMoveInstruction", &CueList::remove_move_instruction);
+        .function("getChannelColorAtCue", &CueList::get_channel_color_at_cue);
 }
