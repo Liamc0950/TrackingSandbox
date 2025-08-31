@@ -15,7 +15,6 @@ protected:
         cue_list->update_channel(2, 50, CueList::UpdateMode::UPDATE_TRACK, 1);
         cue_list->update_channel(2, 10, CueList::UpdateMode::UPDATE_TRACK, 3);
 
-
     }
 
     void TearDown() override {
@@ -45,6 +44,47 @@ TEST_F(CueListUpdateTest, UpdateTraceTrace) {
     EXPECT_EQ(60, cue_list->get_channel_value_at_cue(3, 3));
     EXPECT_EQ(60, cue_list->get_channel_value_at_cue(3, 4));
     EXPECT_EQ(60, cue_list->get_channel_value_at_cue(3, 5));
+
+}
+
+
+TEST_F(CueListUpdateTest, UpdateTraceTraceMovesAheadAndBehind) {
+    // Test UPDATE_TRACE
+
+    // set up move upstream
+    cue_list->update_channel(4, 20, CueList::UpdateMode::UPDATE_CUE_ONLY, 1);
+
+
+    // set up move down the line
+    cue_list->update_channel(4, 30, CueList::UpdateMode::UPDATE_TRACK, 4);
+
+    // trace-trace to check
+    cue_list->update_channel(4, 50, CueList::UpdateMode::UPDATE_TRACE_TRACE, 3);
+
+    EXPECT_EQ(20, cue_list->get_channel_value_at_cue(4, 1));
+    EXPECT_EQ(50, cue_list->get_channel_value_at_cue(4, 2));
+    EXPECT_EQ(50, cue_list->get_channel_value_at_cue(4, 3));
+    EXPECT_EQ(30, cue_list->get_channel_value_at_cue(4, 4));
+    EXPECT_EQ(30, cue_list->get_channel_value_at_cue(4, 5));
+
+}
+
+
+
+TEST_F(CueListUpdateTest, UpdateTraceTraceBiDirectionalMoveAhead) {
+    // Test UPDATE_TRACE
+
+    // set up move down the line
+    cue_list->update_channel(4, 30, CueList::UpdateMode::UPDATE_TRACK, 4);
+
+
+    cue_list->update_channel(4, 50, CueList::UpdateMode::UPDATE_TRACE_TRACE, 2);
+
+    EXPECT_EQ(50, cue_list->get_channel_value_at_cue(4, 1));
+    EXPECT_EQ(50, cue_list->get_channel_value_at_cue(4, 2));
+    EXPECT_EQ(50, cue_list->get_channel_value_at_cue(4, 3));
+    EXPECT_EQ(30, cue_list->get_channel_value_at_cue(4, 4));
+    EXPECT_EQ(30, cue_list->get_channel_value_at_cue(4, 5));
 
 }
 
